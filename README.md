@@ -1,10 +1,12 @@
 # Refresh Rancher certificates before expiration
 
 ## Rancher DEV instance
+ - create API key
+ - create certificate (now only update is possible) - [Issue #1](https://github.com/VAdamec/vault-pki-client/issues/1)
+ - export vars
 
 ```bash
 docker run -p 8080:8080 rancher/server
-# create API key, create certificate, export vars
 ```
 
 ## Vault DEV instance
@@ -12,7 +14,9 @@ docker run -p 8080:8080 rancher/server
 ```bash
 docker run -p 8200:8200 --cap-add=IPC_LOCK -e 'VAULT_DEV_ROOT_TOKEN_ID=myroot' -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' vault
 
-export ROOT_TOKEN="myroot"
+export VAULT_ADDR='http://0.0.0.0:8200'
+export VAULT_TOKEN=myroot
+
 vault mount pki
 vault mount-tune -max-lease-ttl=87600h pki
 vault write pki/root/generate/internal common_name=myvault.com ttl=87600h
@@ -24,15 +28,23 @@ vault write pki/issue/example-dot-com common_name=blah.example.com
 ## NodeJS preparation
 
 ```bash
-export VAULT_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-export RANCHER_URL=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-export RANCHER_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-export RANCHER_SECRET_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-export RANCHER_CERT_ID=XXXX
+export RANCHER_URL=localhost
+export RANCHER_ACCESS_KEY=16FED506A52CFF7658C3
+export RANCHER_SECRET_KEY=utYkWR8UjR4jSWxeJs1vHziB1MSChrzHZcb8jVV8
+export RANCHER_CERT_ID=1c1
 export DEBUG=*
 
 node index.js --vault.pki.role=example-dot-com --certFile=client.pem --keyFile=client.key --caFile=ca.pem --certCN=demo.example.com --certTTL=1m --once=true
 ```
+
+| Parameter | Default Value | Description |
+|-----------|---------------|-------------|
+| `rancher.server.address` | `localhost` | Rancher fqdn/IP - host. |
+| `rancher.server.port` | 8080 | Rancher API port. |
+| `rancher.server.access_key` | None | Rancher API access key. |
+| `rancher.server.secret_key` | None | Rancher API secret key. |
+| `rancher.cert.certid` | None | Certificate unique id create upon first upload. |
+| `certCN` | The hostname of the machine running vault-pki-client  or set via param| The Common Name (CN) and description in Rancher certificate UI - shared with vault-pki-client config |
 
 ## Resources
  - https://github.com/issacg/vault-pki-client

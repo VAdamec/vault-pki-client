@@ -87,6 +87,47 @@ var fetchCert = (function() {
         debug("Writing CA certificate to " + config.caFile);
         return fs.writeFileAsync(config.caFile, data);
     }
+
+    function sendToRancher(private_key,certificate,issuing_ca) {
+        var debug = require('debug')('http')
+        var http = require('http')
+
+        var options = {
+          "host": config.rancher.server["address"],
+          "port": config.rancher.server["port"],
+          "path": "/v2-beta/projects/1a5/certificates/" + config.rancher.cert["certid"],
+          "method": "PUT",
+          "json": true,
+          "headers": {
+            'Authorization': 'Basic ' + new Buffer(config.rancher.server["access_key"] + ':' + config.rancher.server["secret_key"]).toString('base64'),
+            "Content-Type" : "application/json",
+          }
+        }
+
+        debug("Putting certificate to " + options.path);
+
+        var body = {
+          cert: certificate,
+          certChain: issuing_ca,
+          key: private_key,
+          description: config.certCN,
+          name: config.certCN
+        };
+
+        debug("Show payload " + util.inspect(body, false, null))
+
+        callback = function(response) {
+          var str = ''
+          response.on('data', function(chunk){
+            str += chunk
+          })
+          response.on('end', function(){
+            console.log(str)
+          })
+        }
+
+      http.request(options, callback).end(JSON.stringify(body))
+    }
 })();
 
 // Attempt to periodically renew the vault token
@@ -150,47 +191,6 @@ function buildReqOpts() {
         reqOpts.ca.push(fs.readFileSync(config.vault.server["ca-cert"]));
 
     return reqOpts;
-}
-// sendToRancher(data.data.private_key,data.data.certificate,data.data.issuing_ca)
-function sendToRancher(private_key,certificate,issuing_ca) {
-    var debug = require('debug')('http')
-    var http = require('http')
-
-    var options = {
-      "host": config.rancher.server["address"],
-      "port": config.rancher.server["port"],
-      "path": "/v2-beta/projects/1a5/certificates/" + config.rancher.cert["certid"],
-      "method": "PUT",
-      "json": true,
-      "headers": {
-        'Authorization': 'Basic ' + new Buffer(config.rancher.server["access_key"] + ':' + config.rancher.server["secret_key"]).toString('base64'),
-        "Content-Type" : "application/json",
-      }
-    }
-
-    debug("Putting certificate to " + options.path);
-
-    var body = {
-      cert: certificate,
-      certChain: issuing_ca,
-      key: private_key,
-      description: config.certCN,
-      name: config.certCN
-    };
-
-    debug("Show payload " + util.inspect(body, false, null))
-
-    callback = function(response) {
-      var str = ''
-      response.on('data', function(chunk){
-        str += chunk
-      })
-      response.on('end', function(){
-        console.log(str)
-      })
-    }
-
-  http.request(options, callback).end(JSON.stringify(body));
 }
 
 var vaultRequest = (function () {
