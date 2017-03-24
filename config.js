@@ -24,7 +24,18 @@ var defaults = {
     caFile: undefined,
     onUpdate: undefined,
     renewalCoefficient: 0.9,
-    once: false
+    once: false,
+// Rancher config
+    rancher: {
+      server: {
+        "address": process.env.RANCHER_URL || "localhost",
+        "port": process.env.RANCHER_PORT || "8080",
+        "access_key": process.env.RANCHER_ACCESS_KEY || undefined,
+        "secret_key": process.env.RANCHER_SECRET_KEY || undefined
+      }, cert: {
+          "certid": process.env.RANCHER_CERT_ID|| undefined
+      }
+    }
 };
 
 module.exports = rc("vault-pki-client", defaults);

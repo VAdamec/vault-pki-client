@@ -1,4 +1,45 @@
-# vault-pki-client
+# Refresh Rancher certificates before expiration
+
+## Rancher DEV instance
+
+```bash
+docker run -p 8080:8080 rancher/server
+# create API key, create certificate, export vars
+```
+
+## Vault DEV instance
+
+```bash
+docker run -p 8200:8200 --cap-add=IPC_LOCK -e 'VAULT_DEV_ROOT_TOKEN_ID=myroot' -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' vault
+
+export ROOT_TOKEN="myroot"
+vault mount pki
+vault mount-tune -max-lease-ttl=87600h pki
+vault write pki/root/generate/internal common_name=myvault.com ttl=87600h
+vault write pki/config/urls issuing_certificates="http://127.0.0.1:8200/v1/pki/ca" crl_distribution_points="http://127.0.0.1:8200/v1/pki/crl"
+vault write pki/roles/example-dot-com allowed_domains="example.com" allow_subdomains="true" max_ttl="72h"
+vault write pki/issue/example-dot-com common_name=blah.example.com
+```
+
+## NodeJS preparation
+
+```bash
+export VAULT_TOKEN=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+export RANCHER_URL=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+export RANCHER_ACCESS_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+export RANCHER_SECRET_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+export RANCHER_CERT_ID=XXXX
+export DEBUG=*
+
+node index.js --vault.pki.role=example-dot-com --certFile=client.pem --keyFile=client.key --caFile=ca.pem --certCN=demo.example.com --certTTL=1m --once=true
+```
+
+## Resources
+ - https://github.com/issacg/vault-pki-client
+ - https://docs.rancher.com/rancher/v1.3/en/api/v2-beta/api-resources/certificate/
+ - https://github.com/request/request
+
+# Vault-pki-client
 
 ## Synopsis
 
