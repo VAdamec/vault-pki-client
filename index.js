@@ -114,7 +114,7 @@ var fetchCert = (function() {
           name: config.certCN
         };
 
-        //debug("Show payload " + util.inspect(body, false, null))
+        debug("Show payload " + util.inspect(body, false, null))
 
         callback = function(response) {
           var str = ''
@@ -126,8 +126,8 @@ var fetchCert = (function() {
           })
         }
 
-      //http.request(options, callback).end(JSON.stringify(body))
-      http.request(options).end(JSON.stringify(body))
+      http.request(options, callback).end(JSON.stringify(body))
+      //http.request(options).end(JSON.stringify(body))
     }
 })();
 

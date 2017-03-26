@@ -1,7 +1,7 @@
 {
-  "name": "vault-pki-client",
-  "version": "1.0.2",
-  "description": "Tool to manage a keypair provided by HashiCorp Vault",
+  "name": "vault-pki-client-rancher",
+  "version": "0.0.1",
+  "description": "Tool to manage a keypair provided by HashiCorp Vault with Rancher cert API support",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -35,10 +35,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/issacg/vault-pki-client.git"
+    "url": "git+https://github.com/VAdamec/vault-pki-client"
   },
   "bugs": {
-    "url": "https://github.com/issacg/vault-pki-client/issues"
+    "url": "https://github.com/VAdamec/vault-pki-client/issues"
   },
-  "homepage": "https://github.com/issacg/vault-pki-client#readme"
+  "homepage": "https://github.com/VAdamec/vault-pki-client#readme"
 }

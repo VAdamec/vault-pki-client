@@ -6,13 +6,17 @@
  - export vars
 
 ```bash
-docker run -p 8080:8080 rancher/server
+docker run -name rancher -p 8080:8080 rancher/server
 ```
 
 ## Vault DEV instance
 
 ```bash
-docker run -p 8200:8200 --cap-add=IPC_LOCK -e 'VAULT_DEV_ROOT_TOKEN_ID=myroot' -e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' vault
+docker run -name vault -p 8200:8200 \
+--cap-add=IPC_LOCK \
+-e 'VAULT_DEV_ROOT_TOKEN_ID=myroot' \
+-e 'VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200' \
+vault
 
 export VAULT_ADDR='http://0.0.0.0:8200'
 export VAULT_TOKEN=myroot
@@ -45,6 +49,21 @@ node index.js --vault.pki.role=example-dot-com --certFile=client.pem --keyFile=c
 | `rancher.server.secret_key` | None | Rancher API secret key. |
 | `rancher.cert.certid` | None | Certificate unique id create upon first upload. |
 | `certCN` | The hostname of the machine running vault-pki-client  or set via param| The Common Name (CN) and description in Rancher certificate UI - shared with vault-pki-client config |
+
+## Docker
+
+```bash
+docker build -t test .
+docker run -e VAULT_COMMON_NAME="demo.example.com" \
+-e RANCHER_ACCESS_KEY="16FED506A52CFF7658C3" \
+-e RANCHER_SECRET_KEY=utYkWR8UjR4jSWxeJs1vHziB1MSChrzHZcb8jVV8 \
+-e RANCHER_CERT_ID=1c1 \
+-e VAULT_TTL="5m" \
+-e RANCHER_URL="rancher" \
+-e VAULT_ADDR='http://vault:8200' \
+-e VAULT_TOKEN=myroot \
+-l vault:vault -l rancher:rancher -ti test
+```
 
 ## Resources
  - https://github.com/issacg/vault-pki-client
