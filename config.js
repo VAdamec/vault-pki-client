@@ -31,7 +31,8 @@ var defaults = {
         "address": process.env.RANCHER_URL || "localhost",
         "port": process.env.RANCHER_PORT || "8080",
         "access_key": process.env.RANCHER_ACCESS_KEY || undefined,
-        "secret_key": process.env.RANCHER_SECRET_KEY || undefined
+        "secret_key": process.env.RANCHER_SECRET_KEY || undefined,
+        "projectid": process.env.RANCHER_PROJECT_ID || "1a5"
       }, cert: {
           "certid": process.env.RANCHER_CERT_ID|| undefined
       }

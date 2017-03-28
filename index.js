@@ -89,22 +89,22 @@ var fetchCert = (function() {
     }
 
     function sendToRancher(private_key,certificate,issuing_ca) {
-        var debug = require('debug')('http')
-        var http = require('http')
+        var debug = require('debug')('https')
+        var https = require('https')
 
         var options = {
           "host": config.rancher.server["address"],
           "port": config.rancher.server["port"],
-          "path": "/v2-beta/projects/1a5/certificates/" + config.rancher.cert["certid"],
+          "path": "/v2-beta/projects/" + config.rancher.server["projectid"] + "/certificates/" + config.rancher.cert["certid"],
           "method": "PUT",
           "json": true,
           "headers": {
             'Authorization': 'Basic ' + new Buffer(config.rancher.server["access_key"] + ':' + config.rancher.server["secret_key"]).toString('base64'),
             "Content-Type" : "application/json",
           }
-        }
+        };
 
-        debug("Putting certificate " + config.certCN + " to " + options.path);
+        //debug("Putting certificate " + config.certCN + " to " + options.path);
 
         var body = {
           cert: certificate,
@@ -114,20 +114,11 @@ var fetchCert = (function() {
           name: config.certCN
         };
 
-        debug("Show payload " + util.inspect(body, false, null))
 
-        callback = function(response) {
-          var str = ''
-          response.on('data', function(chunk){
-            str += chunk
-          })
-          response.on('end', function(){
-            console.log(str)
-          })
-        }
+        //debug("Show options " + util.inspect(options, false, null))
+        //debug("Show payload " + util.inspect(body, false, null))
 
-      http.request(options, callback).end(JSON.stringify(body))
-      //http.request(options).end(JSON.stringify(body))
+      https.request(options).end(JSON.stringify(body))
     }
 })();
 

@@ -33,6 +33,7 @@ vault write pki/issue/example-dot-com common_name=blah.example.com
 
 ```bash
 export RANCHER_URL=localhost
+export RANCHER_PROJECT_ID=1a1797
 export RANCHER_ACCESS_KEY=16FED506A52CFF7658C3
 export RANCHER_SECRET_KEY=utYkWR8UjR4jSWxeJs1vHziB1MSChrzHZcb8jVV8
 export RANCHER_CERT_ID=1c1
@@ -47,6 +48,7 @@ node index.js --vault.pki.role=example-dot-com --certFile=client.pem --keyFile=c
 | `rancher.server.port` | 8080 | Rancher API port. |
 | `rancher.server.access_key` | None | Rancher API access key. |
 | `rancher.server.secret_key` | None | Rancher API secret key. |
+| `rancher.server.projectid` | 1a5 | Rancher project ID, Default 1a5 is default ;-) |
 | `rancher.cert.certid` | None | Certificate unique id create upon first upload. |
 | `certCN` | The hostname of the machine running vault-pki-client  or set via param| The Common Name (CN) and description in Rancher certificate UI - shared with vault-pki-client config |
 
@@ -55,8 +57,8 @@ node index.js --vault.pki.role=example-dot-com --certFile=client.pem --keyFile=c
 ```bash
 docker build -t test .
 docker run -e VAULT_COMMON_NAME="demo.example.com" \
--e RANCHER_ACCESS_KEY="16FED506A52CFF7658C3" \
--e RANCHER_SECRET_KEY=utYkWR8UjR4jSWxeJs1vHziB1MSChrzHZcb8jVV8 \
+-e RANCHER_ACCESS_KEY="CC8141E0FF27D860B812" \
+-e RANCHER_SECRET_KEY="gVXyB9UFTCZnQpHcV6gcDQAPutLGnoi75o26mJ6b" \
 -e RANCHER_CERT_ID=1c1 \
 -e VAULT_TTL="5m" \
 -e RANCHER_URL="rancher" \
